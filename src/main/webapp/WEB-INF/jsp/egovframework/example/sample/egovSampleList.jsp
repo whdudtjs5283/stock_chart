@@ -113,7 +113,7 @@
 
         function drawTrendlines(result, stockName) {
               var data = new google.visualization.DataTable();
-                data.addColumn('datetime' , '날짜');
+                data.addColumn('string' , '날짜');
 				data.addColumn('number'   , '종가');
 				data.addColumn('number'   , '1주');
 				data.addColumn('number'   , '2주');
@@ -143,7 +143,7 @@
 		    		 //console.log("거래일 : " + year + "년" + month + "월" + day + "일");
 		    		 
 		    		 dataRow =  [
-		    			 new Date(year + "," + month + "," + day)
+		    			dealDate
 			    		 , priceClose
 			    		 , priceAvg5
 			    		 , priceAvg10
@@ -185,7 +185,7 @@
         
         function drawVisualization(result) {
         	  var data = new google.visualization.DataTable();
-              	 data.addColumn('datetime' , '날짜');
+              	 data.addColumn('string' , '날짜');
 				 data.addColumn('number'   , '거래량');				
 				 data.addColumn('number'   , '3개월');
 	
@@ -205,7 +205,7 @@
 		    		 var volumeAvg60 = chartData[i].volumeAvg60;
 
 		    		 dataRow =  [
-		    			 new Date(year + "," + month + "," + day)
+		    			 dealDate
 			    		 , volume
 			    		 , volumeAvg60
 		    		 ];
@@ -223,8 +223,6 @@
 
             var options = {
               title : '거래량',
-              hAxis: {format: 'yyyy년MM월dd일'
-            },
               seriesType: 'bars',
               series: {1: {type: 'line'}}        };
 
