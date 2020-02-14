@@ -14,7 +14,7 @@
 		<result property="priceAvg10" column="price_avg10"/>
 		<result property="priceAvg20" column="price_avg20"/>
 		<result property="priceAvg60" column="price_avg60"/>
-		<result property="priceAvg120" column="price_avg120"/>
+		<result property="priceAvg120" column="price_avg_120"/>
 		<result property="volume" column="volume"/>
 		<result property="volumeAvg5" column="volume_avg5"/>
 		<result property="volumeAvg20" column="volume_avg20"/>
@@ -166,44 +166,70 @@
 
 	<select id="selectChartList" parameterType="searchVO" resultType="egovMap">
 	
-			SELECT a.item_id
-					   	, a.item_name 
-					   	<if test="vol == null and vol == ''">
-				       		, b.deal_date
-				       	</if>
-				       	  <if test="vol != null and vol != ''">
-					        <choose>
-					            <when test="vol == 2">
-									AND last_day(b.deal_date) as deal_date
-								</when>
-							</choose>
-						</if>
-				        , date_format(b.deal_date, '%Y') as year
-				        , date_format(b.deal_date, '%m') as month
-				        , date_format(b.deal_date, '%d') as day
-				       	, b.price_close
-				       	, b.price_avg5
-				       	, b.price_avg10
-				       	, b.price_avg20
-				       	, b.price_avg60
-				       	, b.price_avg_120
-				       	, b.volume
-				       	, b.volume_avg5
-				       	, b.volume_avg20
-				       	, b.volume_avg60
-				       	, b.volume_avg120
-			FROM stock.item a
-			INNER JOIN stock.item_price b on a.item_id = b.item_id
-			WHERE 1=1
-					    AND a.item_id = #{chartId}
-					    AND deal_date between str_to_date(#{searchDate}, '%Y%m%d') - interval 3 month and str_to_date(#{searchDate}, '%Y%m%d')
+			select a.item_id
+				   , b.item_name
+				   , deal_date
+				   , price_open
+				   , price_high
+				   , price_low
+				   , price_close
+				   , price_avg5
+				   , price_avg10
+				   , price_avg20
+				   , price_avg60
+				   , price_avg_120
+				   , volume
+				   , volume_avg5
+				   , volume_avg20
+				   , volume_avg60
+				   , volume_avg120
+				   , year
+				   , month
+				   , day
+			from (
+					select item_id
+						   , deal_date
+						   , price_open
+						   , price_high
+						   , price_low
+						   , price_close
+						   , price_avg5
+						   , price_avg10
+						   , price_avg20
+						   , price_avg60
+						   , price_avg_120
+						   , volume
+						   , volume_avg5
+						   , volume_avg20
+						   , volume_avg60
+						   , volume_avg120
+						   , date_format(deal_date, '%Y') as year
+						   , date_format(deal_date, '%m') as month
+						   , date_format(deal_date, '%d') as day
+			               , date_format(deal_date, '%u') as week
+				           , weekday(deal_date) as wd
+				           , rank() over(partition by week order by wd desc) as wdr
+						   , rank() over(partition by month order by day desc) as dr
+					from item_price
+					where 1=1
+							 and deal_date between str_to_date(#{searchDate}, '%Y%m%d') - interval 3 month and #{searchDate}
+				) as a
+			inner join stock.item b on a.item_id = b.item_id
+			where 1=1
+					 and a.item_id = #{chartId}
 					    <if test="vol != null and vol != ''">
 					        <choose>
 					            <when test="vol == 1">
-									AND dayofweek(b.deal_date) = 6
+									and wdr = 1
+								</when>
+							</choose>
+							 <choose>
+					            <when test="vol == 2">
+									and dr = 1
 								</when>
 							</choose>
 						</if>
+			order by year, month, day asc
 	
 	</select>
 	

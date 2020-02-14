@@ -132,7 +132,7 @@
 		    		 var year = chartData[i].year;
 		    		 var month = chartData[i].month;
 		    		 var day = chartData[i].day;
-		    		 
+		    		 var dealDate = chartData[i].dealDate;
 		    		 var priceClose = chartData[i].priceClose;
 		    		 var priceAvg5 = chartData[i].priceAvg5;
 		    		 var priceAvg10 = chartData[i].priceAvg10;
@@ -143,7 +143,7 @@
 		    		 //console.log("거래일 : " + year + "년" + month + "월" + day + "일");
 		    		 
 		    		 dataRow =  [
-		    			 new Date(year+","+month+","+day)
+		    			 new Date(year + "," + month + "," + day)
 			    		 , priceClose
 			    		 , priceAvg5
 			    		 , priceAvg10
@@ -200,12 +200,12 @@
 		    		 var year = chartData[i].year;
 		    		 var month = chartData[i].month;
 		    		 var day = chartData[i].day;
-		    		 
+		    		 var dealDate = chartData[i].dealDate;
 		    		 var volume = chartData[i].volume;
 		    		 var volumeAvg60 = chartData[i].volumeAvg60;
 
 		    		 dataRow =  [
-		    			 new Date(year+","+month+","+day)
+		    			 new Date(year + "," + month + "," + day)
 			    		 , volume
 			    		 , volumeAvg60
 		    		 ];
@@ -223,13 +223,8 @@
 
             var options = {
               title : '거래량',
-              hAxis: {format: chartDateformat, gridlines:{count:chartLineCount,units: {
-                  years : {format: ['yyyy년']},
-                  months: {format: ['MM월']},
-                  days  : {format: ['dd일']}}
-              }
+              hAxis: {format: 'yyyy년MM월dd일'
             },
-              hAxis: {},
               seriesType: 'bars',
               series: {1: {type: 'line'}}        };
 
